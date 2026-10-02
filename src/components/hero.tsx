@@ -9,34 +9,13 @@ const navigation = [
   { label: "focus", href: "#focus" },
   { label: "numbers", href: "#numbers" },
   { label: "work", href: "#work" },
-  { label: "ai", href: "#ai" },
+  { label: "content", href: "#content" },
   { label: "graphics", href: "#graphics" },
+  { label: "ai", href: "#ai" },
   { label: "clients", href: "#clients" },
   { label: "connect", href: "#connect" },
 ];
 
-const orbitItems = [
-  {
-    label: "strategy",
-    className: "orbit-label strategy",
-  },
-  {
-    label: "ai",
-    className: "orbit-label ai",
-  },
-  {
-    label: "markets",
-    className: "orbit-label markets",
-  },
-  {
-    label: "distribution",
-    className: "orbit-label distribution",
-  },
-  {
-    label: "content",
-    className: "orbit-label content",
-  },
-];
 
 export function Hero() {
   const reducedMotion = useReducedMotion();
@@ -165,54 +144,26 @@ export function Hero() {
             ease: [0.16, 1, 0.3, 1],
           }}
         >
+          <div className="avatar-ambient-aura" />
           <div className="visual-glow" />
 
-          <div className="visual-orbit visual-orbit-outer" />
-          <div className="visual-orbit visual-orbit-middle" />
-          <div className="visual-orbit visual-orbit-inner" />
-
           <motion.div
-            className="orbit-label-system"
+            className="avatar-container avatar-alive-shining"
             animate={
               reducedMotion
                 ? undefined
                 : {
-                    rotate: 360,
+                    y: [0, -10, 0],
                   }
             }
             transition={{
-              duration: 32,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-          >
-            {orbitItems.map((item) => (
-              <div
-                key={item.label}
-                className={item.className}
-              >
-                <span className="orbit-dot" />
-                <span>{item.label}</span>
-              </div>
-            ))}
-          </motion.div>
-
-          <motion.div
-            className="avatar-container"
-            animate={
-              reducedMotion
-                ? undefined
-                : {
-                    y: [0, -8, 0],
-                  }
-            }
-            transition={{
-              duration: 6,
+              duration: 5,
               repeat: Infinity,
               ease: "easeInOut",
             }}
           >
             <div className="avatar-light" />
+            <div className="avatar-shimmer-sweep" />
 
             <Image
               src="/images/rry-avatar.png"
@@ -235,26 +186,6 @@ export function Hero() {
           <span />
         </div>
       </div>
-
-      <Link
-        href="#connect"
-        className="talk-button"
-        aria-label="Talk to Rry"
-      >
-        <span className="talk-label">wanna talk?</span>
-
-        <span className="talk-avatar">
-          <span className="talk-avatar-glow" />
-
-          <Image
-            src="/images/rry-avatar.png"
-            alt=""
-            fill
-            sizes="66px"
-            className="talk-avatar-image"
-          />
-        </span>
-      </Link>
     </section>
   );
 }
