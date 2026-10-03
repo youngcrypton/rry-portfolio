@@ -1,6 +1,6 @@
-"use client";
+﻿"use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
@@ -84,8 +84,23 @@ const stackRotations = [0, -5, 6, -3, 8, -7, 4, -9];
 
 export function Graphics() {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [activeClipId, setActiveClipId] = useState<string | null>(null);
   const reducedMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const mql = window.matchMedia("(max-width: 768px)");
+    setIsMobile(mql.matches);
+    const handler = (e: MediaQueryListEvent) => {
+      setIsMobile(e.matches);
+      if (!e.matches) {
+        setActiveClipId(null);
+      }
+    };
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
 
   const handleTimeUpdate = (e: React.SyntheticEvent<HTMLVideoElement>) => {
     // Exact 5-second preview loop
@@ -100,6 +115,7 @@ export function Graphics() {
 
   const handleCollapse = () => {
     setIsExpanded(false);
+    setActiveClipId(null);
     sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
@@ -210,6 +226,7 @@ export function Graphics() {
                             muted
                             loop
                             playsInline
+                            preload="metadata"
                             onTimeUpdate={handleTimeUpdate}
                             className="graphics-video"
                           />
@@ -242,7 +259,7 @@ export function Graphics() {
                   aria-label="Tap to expand 8 clips"
                 >
                   <span className="graphics-pill-count">{clips.length} graphics</span>
-                  <span className="graphics-pill-dot">·</span>
+                  <span className="graphics-pill-dot">•</span>
                   <span className="graphics-pill-action">tap to expand</span>
                 </button>
               </div>
@@ -258,64 +275,100 @@ export function Graphics() {
               transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
             >
               <div className="graphics-grid">
-                {clips.map((clip, index) => (
-                  <motion.article
-                    key={clip.id}
-                    className="graphics-grid-card rry-liquid-card"
-                    initial={
-                      reducedMotion
-                        ? false
-                        : {
-                            opacity: 0,
-                            y: 20,
-                            scale: 0.96,
-                          }
-                    }
-                    animate={{
-                      opacity: 1,
-                      y: 0,
-                      scale: 1,
-                    }}
-                    transition={{
-                      duration: 0.45,
-                      delay: reducedMotion ? 0 : index * 0.05,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                  >
-                    <Link
-                      href={clip.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="graphics-card-link"
-                      aria-label={`Open "${clip.title}" on X`}
+                {clips.map((clip, index) => {
+                  const isPlayingOnMobile = isMobile && activeClipId === clip.id;
+                  const shouldRenderVideo = !isMobile || isPlayingOnMobile;
+
+                  return (
+                    <motion.article
+                      key={clip.id}
+                      className="graphics-grid-card rry-liquid-card"
+                      initial={
+                        reducedMotion
+                          ? false
+                          : {
+                              opacity: 0,
+                              y: 20,
+                              scale: 0.96,
+                            }
+                      }
+                      animate={{
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                      }}
+                      transition={{
+                        duration: 0.45,
+                        delay: reducedMotion ? 0 : index * 0.05,
+                        ease: [0.16, 1, 0.3, 1],
+                      }}
                     >
-                      <div className="graphics-video-wrap">
-                        <video
-                          src={clip.videoSrc}
-                          poster={clip.posterSrc}
-                          autoPlay
-                          muted
-                          loop
-                          playsInline
-                          onTimeUpdate={handleTimeUpdate}
-                          className="graphics-video"
-                        />
+                      <Link
+                        href={clip.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="graphics-card-link"
+                        aria-label={`Open "${clip.title}" on X`}
+                        onClick={(e) => {
+                          if (isMobile && activeClipId !== clip.id) {
+                            e.preventDefault();
+                            setActiveClipId(clip.id);
+                          }
+                        }}
+                      >
+                        <div className="graphics-video-wrap">
+                          {shouldRenderVideo ? (
+                            <video
+                              src={clip.videoSrc}
+                              poster={clip.posterSrc}
+                              autoPlay
+                              muted
+                              loop
+                              playsInline
+                              preload={isMobile ? "auto" : "none"}
+                              onTimeUpdate={handleTimeUpdate}
+                              className="graphics-video"
+                            />
+                          ) : (
+                            <>
+                              {clip.posterSrc ? (
+                                <div
+                                  className="graphics-poster-bg"
+                                  style={{ backgroundImage: `url(${clip.posterSrc})` }}
+                                />
+                              ) : (
+                                <div className="graphics-card-fallback" />
+                              )}
 
-                        <div className="graphics-card-gradient" />
+                              <div className="graphics-play-indicator" aria-hidden="true">
+                                <span className="graphics-play-icon">
+                                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <polygon points="6 4 20 12 6 20 6 4" />
+                                  </svg>
+                                </span>
+                                <span className="graphics-play-text">tap to preview</span>
+                              </div>
+                            </>
+                          )}
 
-                        <div className="graphics-card-overlay">
-                          <span className="graphics-badge">{clip.tag}</span>
-                          <h3 className="graphics-title">{clip.title}</h3>
-                          <span className="graphics-open-hint">
-                            open clip on x ↗
-                          </span>
+                          <div className="graphics-card-gradient" />
+
+                          <div className="graphics-card-overlay">
+                            <span className="graphics-badge">{clip.tag}</span>
+                            <h3 className="graphics-title">{clip.title}</h3>
+                            <span className="graphics-open-hint">
+                              {isMobile && !isPlayingOnMobile
+                                ? "tap to preview • open on x ↗"
+                                : "open clip on x ↗"}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    </Link>
+                      </Link>
 
-                    <div className="rry-liquid-reflection" aria-hidden="true" />
-                  </motion.article>
-                ))}
+                      <div className="rry-liquid-reflection" aria-hidden="true" />
+                    </motion.article>
+                  );
+                })}
               </div>
             </motion.div>
           )}

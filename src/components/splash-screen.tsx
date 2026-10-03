@@ -1,21 +1,34 @@
-"use client";
+﻿"use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 
 export function SplashScreen() {
+  const [isDone, setIsDone] = useState(false);
+  const reducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsDone(true);
+    }, reducedMotion ? 400 : 3300);
+    return () => clearTimeout(timer);
+  }, [reducedMotion]);
+
+  if (isDone) return null;
+
   return (
     <motion.div
       className="rry-splash"
       initial={{ opacity: 1 }}
-      animate={{
-        opacity: 0,
-        pointerEvents: "none",
-      }}
+      animate={{ opacity: 0 }}
       transition={{
-        delay: 2.82,
-        duration: 0.42,
+        delay: reducedMotion ? 0.3 : 2.82,
+        duration: 0.45,
         ease: [0.76, 0, 0.24, 1],
+      }}
+      onAnimationComplete={() => {
+        setIsDone(true);
       }}
     >
       <div className="splash-background" />
@@ -26,9 +39,7 @@ export function SplashScreen() {
 
       <motion.div
         className="splash-orbit-system"
-        animate={{
-          rotate: 360,
-        }}
+        animate={reducedMotion ? undefined : { rotate: 360 }}
         transition={{
           duration: 18,
           repeat: Infinity,
@@ -45,26 +56,16 @@ export function SplashScreen() {
         <span className="splash-orbit-dot dot-four" />
       </motion.div>
 
-      {/* faint avatar visible from the beginning */}
+      {/* Faint avatar visible from the beginning */}
       <motion.div
         className="splash-ghost-avatar"
-        initial={{
-          opacity: 0,
-          scale: 0.88,
-          filter: "blur(12px)",
-        }}
+        initial={{ opacity: 0, scale: 0.88 }}
         animate={{
-          opacity: [0, 0.16, 0.2, 0.13],
-          scale: [0.88, 1, 1.03, 1],
-          filter: [
-            "blur(12px)",
-            "blur(7px)",
-            "blur(5px)",
-            "blur(8px)",
-          ],
+          opacity: [0, 0.18, 0.22, 0.14],
+          scale: [0.88, 1, 1.02, 1],
         }}
         transition={{
-          duration: 2.9,
+          duration: 2.8,
           times: [0, 0.25, 0.6, 1],
           ease: "easeInOut",
         }}
@@ -74,25 +75,22 @@ export function SplashScreen() {
           alt=""
           fill
           priority
-          sizes="420px"
+          sizes="(max-width: 700px) 280px, 420px"
           className="splash-ghost-image"
         />
       </motion.div>
 
-      {/* colour splash */}
+      {/* Colour splash liquid blobs */}
       <motion.div
         className="splash-liquid liquid-one"
-        initial={{
-          scale: 0.05,
-          opacity: 0,
-        }}
+        initial={{ scale: 0.05, opacity: 0 }}
         animate={{
           scale: [0.05, 1.1, 1.35, 1.15],
-          opacity: [0, 1, 0.88, 0.72],
-          rotate: [0, 22, -8, 15],
+          opacity: [0, 0.95, 0.85, 0.7],
+          rotate: [0, 20, -8, 14],
         }}
         transition={{
-          duration: 2.9,
+          duration: 2.8,
           ease: [0.16, 1, 0.3, 1],
           times: [0, 0.32, 0.68, 1],
         }}
@@ -100,17 +98,14 @@ export function SplashScreen() {
 
       <motion.div
         className="splash-liquid liquid-two"
-        initial={{
-          scale: 0,
-          opacity: 0,
-        }}
+        initial={{ scale: 0, opacity: 0 }}
         animate={{
-          scale: [0, 1.15, 0.92, 1.12],
-          opacity: [0, 0.92, 0.72, 0.5],
-          rotate: [0, -28, 12, -20],
+          scale: [0, 1.15, 0.92, 1.1],
+          opacity: [0, 0.9, 0.7, 0.48],
+          rotate: [0, -25, 12, -18],
         }}
         transition={{
-          duration: 2.7,
+          duration: 2.6,
           delay: 0.12,
           ease: [0.16, 1, 0.3, 1],
         }}
@@ -118,17 +113,14 @@ export function SplashScreen() {
 
       <motion.div
         className="splash-liquid liquid-three"
-        initial={{
-          scale: 0,
-          opacity: 0,
-        }}
+        initial={{ scale: 0, opacity: 0 }}
         animate={{
-          scale: [0, 0.9, 1.3, 1],
-          opacity: [0, 0.8, 0.62, 0.42],
-          rotate: [0, 30, -15, 25],
+          scale: [0, 0.9, 1.25, 1],
+          opacity: [0, 0.78, 0.6, 0.4],
+          rotate: [0, 28, -14, 22],
         }}
         transition={{
-          duration: 2.65,
+          duration: 2.55,
           delay: 0.24,
           ease: [0.16, 1, 0.3, 1],
         }}
@@ -136,77 +128,52 @@ export function SplashScreen() {
 
       <motion.div
         className="splash-liquid liquid-four"
-        initial={{
-          scale: 0,
-          opacity: 0,
-        }}
+        initial={{ scale: 0, opacity: 0 }}
         animate={{
-          scale: [0, 1.2, 0.9, 1.08],
-          opacity: [0, 0.75, 0.55, 0.35],
-          rotate: [0, -18, 20, -10],
+          scale: [0, 1.18, 0.9, 1.06],
+          opacity: [0, 0.72, 0.52, 0.32],
+          rotate: [0, -16, 18, -8],
         }}
         transition={{
-          duration: 2.8,
-          delay: 0.38,
+          duration: 2.7,
+          delay: 0.36,
           ease: [0.16, 1, 0.3, 1],
         }}
       />
 
-      {/* particles */}
+      {/* Floating particles */}
       <div className="splash-particles">
-        {Array.from({ length: 18 }).map((_, index) => (
+        {Array.from({ length: 12 }).map((_, index) => (
           <motion.span
             key={index}
             className={`splash-particle splash-particle-${index + 1}`}
-            initial={{
-              scale: 0,
-              opacity: 0,
-            }}
+            initial={{ scale: 0, opacity: 0 }}
             animate={{
               scale: [0, 1, 0.65],
-              opacity: [0, 1, 0],
-              x: [
-                0,
-                (index % 2 === 0 ? 1 : -1) *
-                  (20 + index * 4),
-              ],
-              y: [
-                0,
-                index % 3 === 0
-                  ? -40 - index * 2
-                  : 30 + index * 3,
-              ],
+              opacity: [0, 0.9, 0],
+              x: [0, (index % 2 === 0 ? 1 : -1) * (20 + index * 4)],
+              y: [0, index % 3 === 0 ? -35 - index * 2 : 25 + index * 3],
             }}
             transition={{
               duration: 1.4 + (index % 4) * 0.18,
-              delay: 0.25 + index * 0.055,
+              delay: 0.25 + index * 0.06,
               ease: "easeOut",
             }}
           />
         ))}
       </div>
 
-      {/* sharp avatar reveal */}
+      {/* Sharp avatar reveal */}
       <motion.div
         className="splash-final-avatar"
-        initial={{
-          opacity: 0,
-          scale: 0.7,
-          filter: "blur(18px) saturate(0.5)",
-        }}
+        initial={{ opacity: 0, scale: 0.72 }}
         animate={{
-          opacity: [0, 0.2, 0.65, 1],
-          scale: [0.7, 0.92, 1.03, 1],
-          filter: [
-            "blur(18px) saturate(0.5)",
-            "blur(10px) saturate(0.8)",
-            "blur(3px) saturate(1)",
-            "blur(0px) saturate(1)",
-          ],
+          opacity: [0, 0.2, 0.7, 1],
+          scale: [0.72, 0.92, 1.02, 1],
         }}
         transition={{
-          duration: 2.25,
-          delay: 0.62,
+          duration: 2.2,
+          delay: 0.6,
           times: [0, 0.3, 0.72, 1],
           ease: [0.16, 1, 0.3, 1],
         }}
@@ -218,20 +185,14 @@ export function SplashScreen() {
           alt="Rry"
           fill
           priority
-          sizes="420px"
+          sizes="(max-width: 700px) 280px, 420px"
           className="splash-final-image"
         />
 
         <motion.div
           className="splash-light-sweep"
-          initial={{
-            x: "-130%",
-            opacity: 0,
-          }}
-          animate={{
-            x: "130%",
-            opacity: [0, 0.8, 0],
-          }}
+          initial={{ x: "-130%", opacity: 0 }}
+          animate={{ x: "130%", opacity: [0, 0.8, 0] }}
           transition={{
             delay: 1.35,
             duration: 0.9,
@@ -242,36 +203,20 @@ export function SplashScreen() {
 
       <motion.div
         className="splash-signature"
-        initial={{
-          opacity: 0,
-          y: 8,
-        }}
-        animate={{
-          opacity: [0, 0.75, 0.75],
-          y: 0,
-        }}
-        transition={{
-          delay: 1.35,
-          duration: 0.7,
-        }}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: [0, 0.8, 0.8], y: 0 }}
+        transition={{ delay: 1.3, duration: 0.7 }}
       >
         <span>AI</span>
-        <i>×</i>
+        <i>&times;</i>
         <span>MARKETS</span>
       </motion.div>
 
       <motion.div
         className="splash-progress"
-        initial={{
-          scaleX: 0,
-        }}
-        animate={{
-          scaleX: 1,
-        }}
-        transition={{
-          duration: 2.95,
-          ease: "linear",
-        }}
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: 1 }}
+        transition={{ duration: 2.9, ease: "linear" }}
       />
     </motion.div>
   );

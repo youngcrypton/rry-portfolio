@@ -59,6 +59,9 @@ a {
   background: #12091c;
 
   isolation: isolate;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .splash-background {
@@ -277,8 +280,10 @@ a {
 
   pointer-events: none;
 
-  filter:
-    drop-shadow(0 0 35px rgba(123, 63, 228, 0.8));
+  filter: blur(8px) drop-shadow(0 0 35px rgba(123, 63, 228, 0.8));
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .splash-ghost-avatar::before {
@@ -598,6 +603,9 @@ a {
     0 0 150px rgba(123, 63, 228, 0.28);
 
   isolation: isolate;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .splash-final-glow {
@@ -621,8 +629,6 @@ a {
 
 .splash-final-image {
   object-fit: cover;
-
-  position: relative !important;
 }
 
 .splash-light-sweep {
@@ -723,25 +729,36 @@ a {
 
 @media (max-width: 700px) {
   .splash-orbit-system {
-    width: 125vw;
+    width: min(88vw, 360px);
   }
 
   .splash-ghost-avatar {
-    width: 72vw;
+    width: 68vw;
+    max-width: 280px;
   }
 
   .splash-final-avatar {
-    width: 72vw;
+    width: 68vw;
+    max-width: 280px;
   }
 
   .splash-liquid {
-    width: 72vw;
+    width: 68vw;
+    max-width: 280px;
+  }
+
+  .splash-atmosphere {
+    width: 60vw;
+    height: 60vw;
+    min-width: 240px;
+    min-height: 240px;
+    filter: blur(40px);
   }
 
   .splash-signature {
     bottom: 7vh;
 
-    font-size: 0.48rem;
+    font-size: 0.52rem;
   }
 }
 
@@ -6399,3 +6416,147 @@ body::after {
 }
 
 
+
+/* =========================================================
+   GRAPHICS ON-DEMAND PREVIEW INDICATOR
+   ========================================================= */
+
+.graphics-play-indicator {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(14, 7, 24, 0.42);
+  pointer-events: none;
+  z-index: 3;
+  transition: opacity 0.3s ease;
+}
+
+.graphics-play-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(20, 10, 32, 0.78);
+  border: 1px solid rgba(211, 176, 255, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 0 16px rgba(123, 63, 228, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brand-glow, #c58cff);
+}
+
+.graphics-play-icon svg {
+  margin-left: 2px;
+}
+
+.graphics-play-text {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
+  color: rgba(246, 239, 230, 0.85);
+}
+
+/* =========================================================
+   MOBILE PERFORMANCE OPTIMIZATION SUITE (max-width: 768px)
+   Preserves visual atmosphere and liquid-glass aesthetics
+   while eliminating GPU compositing and fill-rate lag.
+   ========================================================= */
+
+@media (max-width: 768px) {
+  /* 1. Full-screen fixed atmospheric blurs -> smooth static radial gradients */
+  body::before {
+    animation: none !important;
+    filter: none !important;
+    background:
+      radial-gradient(circle at 16% 20%, rgba(123, 63, 228, 0.18), transparent 38%),
+      radial-gradient(circle at 84% 34%, rgba(183, 121, 255, 0.13), transparent 42%),
+      radial-gradient(circle at 50% 88%, rgba(91, 37, 148, 0.16), transparent 48%) !important;
+    transform: none !important;
+  }
+
+  body::after {
+    /* Disable sweeping rotated 180% blur plane on mobile */
+    display: none !important;
+  }
+
+  /* 2. Heavy section glow blurs (50px - 110px) reduced to lightweight static glows */
+  .about-orb {
+    filter: blur(24px) !important;
+    animation: none !important;
+  }
+
+  .about-card-shine,
+  .about-card-beam {
+    animation: none !important;
+  }
+
+  .focus-glow,
+  .numbers-glow,
+  .work-glow,
+  .content-glow,
+  .graphics-glow {
+    animation: none !important;
+    filter: blur(28px) !important;
+  }
+
+  .hero-glow-one,
+  .hero-glow-two,
+  .hero-glow-three,
+  .hero-background {
+    animation: none !important;
+    filter: blur(24px) !important;
+  }
+
+  /* 3. Liquid-glass cards: optimize backdrop-filter from blur(22px) to blur(10px) */
+  .rry-liquid-card,
+  .numbers-card {
+    backdrop-filter: blur(10px) saturate(120%) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(120%) !important;
+  }
+
+  .about-card,
+  .focus-card {
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+  }
+
+  /* 4. Disable continuous infinite 360-degree rotating conic-gradient mask on mobile */
+  .about-card::after,
+  .focus-card::after,
+  .numbers-card::after,
+  .rry-liquid-card::after {
+    animation: none !important;
+    transform: none !important;
+    background: linear-gradient(
+      135deg,
+      rgba(201, 139, 255, 0.38) 0%,
+      rgba(255, 255, 255, 0.18) 25%,
+      transparent 55%,
+      rgba(123, 63, 228, 0.22) 100%
+    ) !important;
+  }
+
+  /* 5. Disable continuous moving reflection sheen across cards on mobile */
+  .rry-liquid-card .rry-liquid-reflection {
+    animation: none !important;
+    transform: translateX(0) rotate(8deg) !important;
+    opacity: 0.35 !important;
+  }
+
+  .about-card-inner::after,
+  .focus-card-inner::after {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  /* 6. Static technical labels and borders on mobile */
+  .about-heading-label,
+  .focus-heading-top,
+  .numbers-heading-label {
+    animation: none !important;
+  }
+}
