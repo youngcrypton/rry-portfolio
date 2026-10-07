@@ -118,6 +118,7 @@ export function Content() {
           <div className="content-heading-top">
             <span className="content-heading-line" />
             <span>threads & writing</span>
+            <span className="mobile-swipe-hint">swipe →</span>
           </div>
 
           <h2>breakdowns, essays & research.</h2>

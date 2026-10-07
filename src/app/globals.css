@@ -5455,6 +5455,10 @@ body::after {
   text-transform: lowercase;
 }
 
+.mobile-swipe-hint {
+  display: none;
+}
+
 .content-heading-line {
   width: 34px;
   height: 1px;
@@ -5600,28 +5604,113 @@ body::after {
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .content-section {
     padding-top: 60px;
     padding-bottom: 90px;
   }
 
+  .content-container {
+    width: 100%;
+    max-width: 100%;
+    padding-inline: 0;
+  }
+
   .content-heading {
-    margin-bottom: 28px;
+    margin-bottom: 24px;
+    padding-inline: clamp(16px, 5vw, 24px);
   }
 
   .content-heading h2 {
     max-width: 360px;
-    font-size: 38px;
+    font-size: 34px;
+  }
+
+  .mobile-swipe-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    font-family: var(--font-geist-mono), monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(246, 239, 230, 0.55);
   }
 
   .content-grid-list {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 14px;
+    padding-inline: clamp(16px, 5vw, 24px);
+    padding-bottom: 22px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .content-grid-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .content-card {
+    flex: 0 0 226px;
+    width: 226px;
+    min-width: 226px;
+    max-width: 226px;
+    height: 251px;
+    min-height: 251px;
+    max-height: 251px;
+    scroll-snap-align: start;
+    box-sizing: border-box;
+    border-radius: 16px;
+  }
+
+  .content-card-link {
+    padding: 10px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    border-radius: 16px;
+  }
+
+  .content-image-wrap {
+    width: 100%;
+    height: 136px;
+    aspect-ratio: unset;
+    flex-shrink: 0;
+    border-radius: 10px;
+  }
+
+  .content-card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 8px 2px 2px;
+    gap: 4px;
+    min-height: 0;
+  }
+
+  .content-category {
+    font-size: 0.5rem;
+    letter-spacing: 0.14em;
   }
 
   .content-title {
-    font-size: 1.05rem;
+    font-size: 0.8rem;
+    line-height: 1.25;
+    -webkit-line-clamp: 2;
+    margin: 0;
+  }
+
+  .content-action {
+    padding-top: 2px;
+    font-size: 0.56rem;
   }
 }
 
@@ -6023,23 +6112,103 @@ body::after {
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .graphics-section {
     padding-top: 50px;
     padding-bottom: 80px;
   }
 
+  .graphics-container {
+    width: 100%;
+    max-width: 100%;
+    padding-inline: 0;
+  }
+
+  .graphics-heading {
+    padding-inline: clamp(16px, 5vw, 24px);
+    margin-bottom: 24px;
+  }
+
   .graphics-heading h2 {
-    font-size: 34px;
+    font-size: 32px;
+  }
+
+  .graphics-grid-wrapper {
+    width: 100%;
   }
 
   .graphics-grid {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
     gap: 14px;
+    padding-inline: clamp(16px, 5vw, 24px);
+    padding-bottom: 22px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .graphics-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .graphics-grid-card {
+    flex: 0 0 226px;
+    width: 226px;
+    min-width: 226px;
+    max-width: 226px;
+    height: 251px;
+    min-height: 251px;
+    max-height: 251px;
+    scroll-snap-align: start;
+    box-sizing: border-box;
+    border-radius: 16px;
+  }
+
+  .graphics-card-link {
+    width: 100%;
+    height: 100%;
+    border-radius: 16px;
+  }
+
+  .graphics-video-wrap {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: unset;
+    border-radius: 16px;
   }
 
   .graphics-stack {
-    width: 90vw;
+    width: 226px;
+    height: 251px;
+    aspect-ratio: unset;
+  }
+
+  .graphics-stack-card {
+    width: 226px;
+    height: 251px;
+    border-radius: 16px;
+  }
+
+  .graphics-card-overlay {
+    padding: 12px;
+    gap: 4px;
+  }
+
+  .graphics-title {
+    font-size: 0.8rem;
+    line-height: 1.25;
+  }
+
+  .graphics-badge {
+    font-size: 0.5rem;
+  }
+
+  .graphics-open-hint {
+    font-size: 0.54rem;
   }
 }
 

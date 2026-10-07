@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -92,9 +92,14 @@ export function Graphics() {
   useEffect(() => {
     const mql = window.matchMedia("(max-width: 768px)");
     setIsMobile(mql.matches);
+    if (mql.matches) {
+      setIsExpanded(true);
+    }
     const handler = (e: MediaQueryListEvent) => {
       setIsMobile(e.matches);
-      if (!e.matches) {
+      if (e.matches) {
+        setIsExpanded(true);
+      } else {
         setActiveClipId(null);
       }
     };
@@ -154,6 +159,7 @@ export function Graphics() {
           <div className="graphics-heading-top">
             <span className="graphics-heading-line" />
             <span>video clips & motion</span>
+            <span className="mobile-swipe-hint">swipe →</span>
           </div>
 
           <div className="graphics-heading-row">
